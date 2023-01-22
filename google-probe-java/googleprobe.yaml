@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: googleprobe
+  labels:
+    tier: frontend
+    app: myapp
+spec:
+  selector:
+    matchLabels:
+      app: myapp
+  replicas: 2
+  template:
+    metadata:
+      name: googleprobe
+      labels:
+        app: myapp
+    spec:
+      containers: 
+      - name: googleprobe
+        image: mhkadam/googleprobe:v2
+        #v1 was working v2 with tools.jar    

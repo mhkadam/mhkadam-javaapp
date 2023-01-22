@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bdrk8
+  labels:
+    tier: frontend
+    app: myappbdr
+spec:
+  selector:
+    matchLabels:
+      app: myappbdr
+  replicas: 2
+  template:
+    metadata:
+      name: bdrk8
+      labels:
+        app: myappbdr
+    spec:
+      containers: 
+      - name: bdrk8
+        image: mhkadam/bdrja:v1     

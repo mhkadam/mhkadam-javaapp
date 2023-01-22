@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# Start a single BDR tier
+startTier() {
+   echo "Starting $1 on port $2"
+
+#   cmd="java -Xmx64m -Xms64m -javaagent:/home/ravello/AppServerAgent/ver4.3.5.13/javaagent.jar \
+   cmd="java -Xmx64m -Xms64m -javaagent:~/agent/ver4.3.5.13/javaagent.jar \
+#-Dappdynamics.controller.hostName=controller44-isaesimonboarding-rjiq3i68.srv.ravcloud.com \
+-Dappdynamics.controller.hostName=columntnfr.saas.appdynamics.com \
+-Dappdynamics.controller.port=8090 \
+-Dappdynamics.agent.applicationName=BigDealRetail \
+-Dappdynamics.agent.tierName=$1 \
+-Dappdynamics.agent.nodeName=$1Node1 \
+-Dappdynamics.agent.uniqueHostId=localhost \
+-Dhttp.port=$2 \
+-jar testappserver.jar $1config.xml \
+| tee logs/$1.log"
+   echo $cmd
+
+   eval $cmd
+}
+
+# Stop BDR processes in case they're already running
+source stop_BDR_app.sh
+
+# Start BDR tiers
+startTier "3dTier" "10030" &
+
+startTier "2ndTier" "10020" &
+
+startTier "1stTier" "10010,10011" &
+
+# Start the machine agent for BDR
+#java -Dappdynamics.controller.hostName=controller44-isaesimonboarding-rjiq3i68.srv.ravcloud.com -Dappdynamics.controller.port=8090 -Dappdynamics.agent.applicationName=BigDealRetail -jar ~/MachineAgent/machineagent.jar &
+java -Dappdynamics.controller.hostName=columntnfr.saas.appdynamics.com -Dappdynamics.controller.port=8090 -Dappdynamics.agent.applicationName=BigDealRetail -jar ~/agent/ver4.3.5.13/javaagent.jar &

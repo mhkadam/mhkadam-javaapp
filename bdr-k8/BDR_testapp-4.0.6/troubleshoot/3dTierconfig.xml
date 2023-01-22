@@ -1,0 +1,17 @@
+<loadpatterns>
+		<times-executed>0</times-executed>
+		<seconds-between-requests>4</seconds-between-requests>
+        <!-- defines a uri pattern that is executed the number of times specified above with the delay in seconds specified above
+        specify 0 if you want to keep running in a loop. A load pattern can define slow or stalled requests
+        use the attribute slow-requests for slow and stalled-requests for stalls , specify delay with the attribute delay-in-seconds-->
+		<servlet-end-point type="supported" url-filter="contains" value="to3d" slow-requests ="5" delay-in-seconds = "5"
+ >
+            <!-- each of the queries below is executed 10 times. -->
+			<sql-queries type="supported">
+                <!-- delay is supported only for statement types -->
+				<sql-query type="statement" value="Select prod-name, prod-desc from prod-table where prod-id={GUID}" delay-in-millis="10"/>
+				<sql-query type="prepared" value="Insert into prod-table ({GUID}, prod-name, prod-desc, prod-price)"/>
+				<sql-query type="callable" value="Execute sp_upate_price({GUID},25.49)"/>			
+			</sql-queries>
+		</servlet-end-point>
+</loadpatterns>

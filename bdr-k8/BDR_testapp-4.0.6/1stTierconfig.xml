@@ -1,0 +1,86 @@
+<loadpatterns>
+        <!-- specify 0 for forever load -->
+		<times-executed>0</times-executed>
+		<seconds-between-requests>5</seconds-between-requests>
+        <!-- defines a uri pattern that is executed the number of times specified above with the delay in seconds specified above
+        specify 0 if you want to keep running in a loop. A load pattern can define slow or stalled requests
+        use the attribute slow-requests for slow and stalled-requests for stalls , specify delay with the attribute delay-in-seconds-->
+		<servlet-pattern type="supported" session-id="23243454dcssdww" name="TestPattern" normal-requests="10" delay-in-seconds="2" slow-requests-schedule-mins="5" slow-requests="5">
+			<urls>
+				<url value="/processorder/electronics" method="GET">
+                        <request-data>
+                            <parameter name="state" value="CA"/>
+                            <parameter name="category" value="books"/>
+                            <header name="user-agent" value="mozilla"/>
+                            <cookie name="username" value="testUser"/>
+                            <session-object name="moneyspent" value="$23232"/>
+                        </request-data>
+				</url>
+  				
+
+                <url method="GET" value="/product/outdoor/BackPack">
+                    <request-data>
+                        <parameter name="state" value="CA"/>
+                        <parameter name="color" value="blue"/>					
+                        <parameter name="category" value="Equipment"/>
+                        <header name="user-agent" value="mozilla"/>
+                        <cookie name="username" value="testUser"/>
+                        <session-object name="organization" value="39242"/>
+                    </request-data>
+                </url>			
+                <url method="GET" value="/product/outdoor/MultifunctionKnife">
+                    <request-data>
+                        <parameter name="color" value="red"/>
+                        <parameter name="category" value="Utility"/>                    
+                    </request-data>					
+                </url>
+		
+                <url method="GET" value="/product/indoor/DartBoard"/>
+                <url method="GET" value="/product/indoor/BillardTable"/>
+                <url method="GET" value="/product/indoor/{sequence}"/>			
+                <url method="GET" value="/product/indoor/{GUID}"/>
+                <url method="GET" value="/product/furniture/Dining Table">
+                    <request-data>
+                        <parameter name="category" value="livingRoom"/>
+                    </request-data>
+                </url>
+                <url method="GET" value="/product/furniture/SwivelChair">
+                    <request-data>
+                        <parameter name="category" value="office"/>
+                    </request-data>
+                </url>
+                <url method="GET" value="/quoterequest">
+                    <request-data>
+                        <parameter name="region" value="west"/>
+                        <parameter name="ORG_ID" value="West_Coast_Real_Estate_Services"/>
+                    </request-data>	
+                </url>
+                <url method="GET" value="/quoterequest">
+                    <request-data>
+                        <parameter name="region" value="east"/>
+                        <parameter name="ORG_ID" value="McCloud_Fin_Svcs"/>
+                    </request-data>	
+                </url>
+            </urls>	
+            <!-- each of the queries below is executed 10 times. -->
+			<sql-queries type="supported" db-url="jdbc:mysql://localhost:3308/newschema" db-version="5.6" db-vendor="MYSQL">
+                <!-- delay is supported only for statement types -->
+				<sql-query type="statement" value="Select prod-name, prod-desc from prod-table where prod-id={GUID}" delay-in-millis="10"/>
+				<sql-query type="prepared" value="Insert into prod-table ({GUID}, prod-name, prod-desc, prod-price)"/>
+				<sql-query type="callable" value="Execute sp_upate_price({GUID},25.49)"/>			
+			</sql-queries>
+            <http-backends>
+                <url value="http://localhost:10020/http/to2nd"/>            
+                <url value="http://localhost:10010/foo"/>
+                <url value="http://localhost:10011/foo"/>
+			          
+                <!-- <url fork="true" value="http://localhost:10001/http/ping"/> -->
+            </http-backends>
+		</servlet-pattern>
+    <!-- supported tokens
+        1) {GUID} replaces with a GUID 
+        2) {SEQUENCE} replaces with a number that increases continously and is shared across all transactions
+        3) {TIMESTAMP} replaces with a timestamp
+        4) {COUNTER}, needs a counter element to be defined <counter name="{btcounter} counter-begin="1" counter-end="10" /> 
+        -->
+</loadpatterns>

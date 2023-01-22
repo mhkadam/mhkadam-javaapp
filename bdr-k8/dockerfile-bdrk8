@@ -1,0 +1,61 @@
+FROM ubuntu:18.04
+
+#
+# UTF-8 by default
+USER root
+#
+RUN apt-get -qq update && \
+    apt-get -qqy install gnupg2 locales && \
+    locale-gen en_US.UTF-8 && \
+    rm -rf /var/lib/apt/lists/*
+
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
+
+RUN apt-get update -y
+RUN apt-get install -y unzip
+#
+# Pull Zulu OpenJDK binaries from official repository:
+#
+RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 0xB1998361219BD9C9 && \
+    echo "deb http://repos.azulsystems.com/ubuntu stable main" >> /etc/apt/sources.list.d/zulu.list && \
+    apt-get -qq update && \
+    apt-get -qqy install zulu-8 && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN mkdir -p /opt/appdynamics/repo/appagents
+
+# COPY BDR Application
+
+COPY ./bdr.zip /tmp
+
+# Unzip BDR Application
+
+RUN unzip /tmp/bdr.zip -d /opt/
+
+# Copy Application Agent
+
+COPY ./AppServerAgent-* /tmp
+
+# Setup Application Agent
+
+RUN unzip /tmp/AppServerAgent-* -d /opt/appdynamics/repo/appagents/latestver
+RUN ln -snf /opt/appdynamics/repo/appagents/latestver/ver* /opt/appdynamics/appagent
+
+# Start BDR Application
+ENTRYPOINT java -Xmx64m -Xms64m -javaagent:/opt/appdynamics/appagent/javaagent.jar \
+-Dappdynamics.controller.hostName=ps-east-prod.saas.appdynamics.com \
+-Dappdynamics.controller.port=443 \
+-Dappdynamics.controller.ssl.enabled=true \
+-Dappdynamics.agent.applicationName=hv-BDR-Test \
+-Dappdynamics.agent.tierName=3dTier \
+-Dappdynamics.agent.nodeName=${HOSTNAME}Node1 \
+-Dappdynamics.agent.accountName=ps-east-prod \
+-Dappdynamics.agent.accountAccessKey=i7x6qm2k1rpg \
+-Dappdynamics.jvm.shutdown.mark.node.as.historical=true \
+-Dappdynamics.agent.reuse.nodeName=true \
+-Dappdynamics.agent.reuse.nodeName.prefix=${HOSTNAME} \
+-Dhttp.port=10030 \
+-jar /opt/BDR/BDR_testapp-4.0.6/testappserver.jar /opt/BDR/BDR_testapp-4.0.6/3dTierconfig.xml \
+| tee /opt/BDR/BDR_testapp-4.0.6/logs/3dTier.log && /bin/bash	
