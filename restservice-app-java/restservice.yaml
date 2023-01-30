@@ -18,11 +18,16 @@ spec:
       labels:
         app: myapp
         salesRep: harsh
-        #appd-node-name: $(echo -n $(HOSTNAME) | base64)
+        appd-node-name: $(echo -n $(HOSTNAME) | base64)
     spec:
       containers: 
       - name: restservice
         image: mhkadam/restapi:latest
+        env:
+        - name: HOSTNAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
          
         
 ---
