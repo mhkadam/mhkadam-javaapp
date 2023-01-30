@@ -1,0 +1,38 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: downstreamapp
+  labels:
+    app: downstreamapp
+  namespace: java-apps
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: downstreamapp
+  template:
+    metadata:
+      labels:
+        app: downstreamapp
+    spec:
+      containers:
+      - name: downstreamapp
+        image: docker.io/abhimanyubajaj98/downstreamapp
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: downstreamapp-service
+  labels:
+    app: downstreamapp
+  namespace: java-apps
+spec:
+  ports:
+  - port: 8080
+    targetPort: 8080
+  selector:
+    app: downstreamapp

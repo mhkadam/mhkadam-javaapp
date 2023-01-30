@@ -1,0 +1,43 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: upstreamapp
+  labels:
+    app: upstreamapp
+  namespace: java-apps
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: upstreamapp
+  template:
+    metadata:
+      labels:
+        app: upstreamapp
+    spec:
+      securityContext:
+        runAsUser: 1000
+      containers:
+      - name: upstreamapp
+        image: docker.io/abhimanyubajaj98/upstreamapp
+        env:
+          - name: DOWNSTREAM_HTTP_URL
+            value: "http://downstreamapp-service:8080/downstream/hello"
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: upstreamapp-service
+  labels:
+    app: upstreamapp
+  namespace: java-apps
+spec:
+  ports:
+  - port: 8080
+    targetPort: 8080
+  selector:
+    app: upstreamapp
