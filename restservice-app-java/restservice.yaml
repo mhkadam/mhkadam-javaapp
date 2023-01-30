@@ -17,6 +17,7 @@ spec:
       name: restservice
       labels:
         app: myapp
+        salesRep: harsh
     spec:
       containers: 
       - name: restservice
