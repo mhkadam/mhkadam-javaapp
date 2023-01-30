@@ -18,16 +18,15 @@ spec:
       labels:
         app: myapp
         salesRep: harsh
+        appd-node: ".metadata.name"
     spec:
       containers: 
       - name: restservice
         image: mhkadam/restapi:latest
-        env:
-          - name: appd-node-name
-            valueFrom:
-              fieldRef:
-                fieldPath: metadata.name        
-
+        labels:
+          appd-node-name: metadata.name
+          appd-node-name-2: $HOSTNAME
+        
 ---
 apiVersion: v1
 kind: Service
