@@ -19,13 +19,15 @@ spec:
         app: myapp
         salesRep: harsh
         appd-node-name: metadata.name
-        appd-node-name-2: $HOSTNAME
     spec:
       containers: 
       - name: restservice
         image: mhkadam/restapi:latest
-        labels:
-          
+        env:
+          - name: MY_POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name          
         
 ---
 apiVersion: v1
