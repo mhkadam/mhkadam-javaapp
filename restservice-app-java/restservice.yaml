@@ -24,7 +24,7 @@ spec:
       - name: restservice
         image: mhkadam/restapi:latest
         env:
-        - name: HOSTNAME
+        - name: (HOSTNAME)
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
