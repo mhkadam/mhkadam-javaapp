@@ -22,11 +22,11 @@ spec:
       containers: 
       - name: restservice
         image: mhkadam/restapi:latest
-      env:
-        - name: appd-node-name
-          valueFrom:
-          fieldRef:
-            fieldPath: metadata.name        
+        env:
+          - name: appd-node-name
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name        
 
 ---
 apiVersion: v1
