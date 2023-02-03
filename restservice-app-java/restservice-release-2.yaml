@@ -1,0 +1,50 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: restservice
+  namespace: java-apps
+  labels:
+    type: frontend
+    app: myapp
+    appd-tier: relese-v2
+spec:
+  selector:
+    matchLabels:
+      app: myapp
+  replicas: 2
+  template:
+    metadata:
+      name: restservice
+      labels:
+        app: myapp
+        salesRep: harsh
+        #appd-tier: v1
+        #appd-node-name: "$(echo -n $(HOSTNAME) | base64)"
+        #appd-node-name: HOSTNAME
+    spec:
+      containers: 
+      - name: restservice
+        image: mhkadam/restapi:latest
+        env:
+        - name: HOSTNAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+         
+        
+---
+apiVersion: v1
+kind: Service
+metadata: 
+  name: rest-api-service
+  namespace: java-apps
+
+spec:
+  type: LoadBalancer
+  ports:
+    - targetPort: 8080
+      port: 80
+  selector:
+    type: frontend
+    app: myapp       
