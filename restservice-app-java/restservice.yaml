@@ -7,6 +7,7 @@ metadata:
   labels:
     type: frontend
     app: myapp
+    appd-tier: depl-label
 spec:
   selector:
     matchLabels:
@@ -18,7 +19,7 @@ spec:
       labels:
         app: myapp
         salesRep: harsh
-        appd-tier: v1
+        #appd-tier: v1
         #appd-node-name: "$(echo -n $(HOSTNAME) | base64)"
         #appd-node-name: HOSTNAME
     spec:
