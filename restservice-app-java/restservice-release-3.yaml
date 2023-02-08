@@ -1,0 +1,51 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: restservice-r2
+  namespace: java-apps-r3
+  labels:
+    type: frontend
+    app: myapp
+    appd-tier: relese-v3
+spec:
+  selector:
+    matchLabels:
+      app: myapp
+  replicas: 2
+  template:
+    metadata:
+      name: restservice
+      labels:
+        app: myapp
+        salesRep: harsh
+        my-canary-release: r3
+        #appd-tier: v1
+        #appd-node-name: "$(echo -n $(HOSTNAME) | base64)"
+        #appd-node-name: HOSTNAME
+    spec:
+      containers: 
+      - name: restservice
+        image: mhkadam/restapi:latest
+        env:
+        - name: HOSTNAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+         
+        
+---
+apiVersion: v1
+kind: Service
+metadata: 
+  name: rest-api-service-3
+  namespace: java-apps-r3
+
+spec:
+  type: LoadBalancer
+  ports:
+    - targetPort: 8080
+      port: 80
+  selector:
+    type: frontend
+    app: myapp       
